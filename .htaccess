@@ -1,0 +1,8 @@
+RewriteEngine On
+RewriteRule ^admin/?$ admin/index.php [L]
+RewriteRule ^admin/login/?$ admin/login.php [L]
+RewriteRule ^admin/service-editor/?$ admin/service_editor.php [L]
+RewriteRule ^admin/maintenance-mode/?$ admin/maintenance_mode.php [L]
+RewriteRule ^admin/smtp-config/?$ admin/smtp_config.php [L]
+RewriteRule ^admin/user-management/?$ admin/user_management.php [L]
+RewriteRule ^status/?$ public/status.php [L]
