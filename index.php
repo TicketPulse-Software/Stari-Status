@@ -1,35 +1,15 @@
-<?php
-require '/includes/db.php';
-require '/includes/functions.php';
+<?php include 'includes/header.php'; ?>
+<header class="py-8 md:py-12 mb-8">
+    <!-- Header content here -->
+</header>
 
-$services = $pdo->query("SELECT * FROM services")->fetchAll(PDO::FETCH_ASSOC);
-$incidents = getOpenIncidents($pdo);
+<main>
+    <h2 class="container text-xs tracking-wide text-gray-500 dark:text-gray-300 uppercase font-bold mb-8">
+        Monitors
+    </h2>
+    <div class="monitors space-y-6">
+        <?php include 'includes/check_services.php'; ?>
+    </div>
+</main>
 
-foreach ($services as &$service) {
-    $service['uptime'] = getUptime($pdo, $service['id']);
-}
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Status Page</title>
-</head>
-<body>
-    <h1>Service Status</h1>
-    <?php foreach ($services as $service): ?>
-        <div>
-            <h2><?php echo htmlspecialchars($service['name']); ?></h2>
-            <p>Status: <?php echo htmlspecialchars($service['status']); ?></p>
-            <p>Uptime for last 90 days: <?php echo count(array_filter($service['uptime'], fn($u) => $u['status'] === 'online')) / count($service['uptime']) * 100; ?>%</p>
-        </div>
-    <?php endforeach; ?>
-    <h1>Open Incidents</h1>
-    <?php foreach ($incidents as $incident): ?>
-        <div>
-            <h2><?php echo htmlspecialchars($incident['description']); ?></h2>
-            <p>Status: <?php echo htmlspecialchars($incident['status']); ?></p>
-            <p>Created at: <?php echo htmlspecialchars($incident['created_at']); ?></p>
-        </div>
-    <?php endforeach; ?>
-</body>
-</html>
+<?php include 'includes/footer.php'; ?>

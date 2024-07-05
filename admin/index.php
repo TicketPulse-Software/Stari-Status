@@ -1,22 +1,16 @@
 <?php
-require '../includes/auth.php';
-redirectIfNotLoggedIn();
+session_start();
+if (!isset($_SESSION['loggedin'])) {
+    header('Location: login.php');
+    exit;
+}
+include '../includes/header.php';
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Admin Panel</title>
-</head>
-<body>
-    <h1>Admin Panel</h1>
-    <ul>
-        <li><a href="service_editor.php">Edit Services</a></li>
-        <li><a href="maintenance_mode.php">Maintenance Mode</a></li>
-        <li><a href="smtp_config.php">SMTP Config</a></li>
-        <?php if (isAdmin()): ?>
-            <li><a href="user_management.php">User Management</a></li>
-        <?php endif; ?>
-        <li><a href="logout.php">Logout</a></li>
-    </ul>
-</body>
-</html>
+<main>
+    <h2 class="container text-2xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">Admin Panel</h2>
+    <div class="container">
+        <a href="services.php" class="text-blue-500">Manage Services</a>
+        <a href="incidents.php" class="text-blue-500">Manage Incidents</a>
+    </div>
+</main>
+<?php include '../includes/footer.php'; ?>
