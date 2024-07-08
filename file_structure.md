@@ -1,0 +1,23 @@
+/uptime-monitor
+    /admin
+        index.php
+        add_service.php
+        edit_service.php
+        delete_service.php
+        incidents.php
+        add_incident.php
+        edit_incident.php
+        delete_incident.php
+        login.php
+        logout.php
+    /css
+        styles.css
+    /js
+        bootstrap.bundle.min.js
+    /vendor
+        /boxicons
+            (download from https://boxicons.com)
+    index.php
+    db.php
+    update_status.php
+    maintenance_mode.php

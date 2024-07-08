@@ -1,0 +1,49 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+.table {
+    margin: 0 auto;
+    width: 100%;
+}
+
+.status-up {
+    color: green;
+}
+
+.status-down {
+    color: red;
+}
+
+.uptime-bars {
+    display: flex;
+}
+
+.uptime-bar {
+    width: 3px;
+    height: 20px;
+    margin-right: 1px;
+}
+
+.status-up {
+    background-color: green;
+}
+
+.status-down {
+    background-color: red;
+}
+
+.status-unknown {
+    background-color: gray;
+}
+
+header, footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1em 0;
+}
