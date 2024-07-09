@@ -39,4 +39,13 @@ CREATE TABLE incidents (
     FOREIGN KEY (service_id) REFERENCES services(id)
 );
 
+CREATE TABLE incident_steps (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    incident_id INT NOT NULL,
+    step VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (incident_id) REFERENCES incidents(id)
+);
+
 ALTER TABLE service_logs ADD INDEX(service_id, checked_at);

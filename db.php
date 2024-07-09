@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
-$db = 'ticketpu_status';
-$user = 'ticketpu_status';
-$pass = 'ticketpu_status';
+$db = 'your_database';
+$user = 'your_database_user';
+$pass = 'your_database_password';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);

@@ -5,38 +5,18 @@ include 'db.php';
 $query = $pdo->query('SELECT * FROM services');
 $services = $query->fetchAll(PDO::FETCH_ASSOC);
 
-// Fetch incidents within the last 90 days
-$incidentQuery = $pdo->prepare('SELECT * FROM incidents WHERE DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 90 DAY) ORDER BY created_at DESC');
-$incidentQuery->execute();
-$incidents = $incidentQuery->fetchAll(PDO::FETCH_ASSOC);
-
-// Function to get incident for a specific day
-function getIncidentsForDay($date, $incidents) {
-    $dayIncidents = [];
-    foreach ($incidents as $incident) {
-        if (date('Y-m-d', strtotime($incident['created_at'])) === $date) {
-            $dayIncidents[] = $incident;
-        }
-    }
-    return $dayIncidents;
-}
-
-// Function to get status class
 function getStatusClass($status) {
     return $status === 'up' ? 'Operational' : ($status === 'down' ? 'Major Outage' : 'Degraded Performance');
 }
 
-// Function to get status color
 function getStatusColor($status) {
     return $status === 'up' ? 'text-green-600 dark:text-green-400' : ($status === 'down' ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400');
 }
 
-// Function to get status background color
 function getStatusBgColor($status) {
     return $status === 'up' ? 'bg-green-400' : ($status === 'down' ? 'bg-red-400' : 'bg-yellow-400');
 }
 
-// Function to get uptime bars
 function getUptimeBars($serviceId, $pdo) {
     $date = new DateTime();
     $date->modify('-90 days');
@@ -52,6 +32,18 @@ function getUptimeBars($serviceId, $pdo) {
         $bars[$dayIndex] = $log['status'] === 'up' ? 'bg-green-400' : ($log['status'] === 'down' ? 'bg-red-400' : 'bg-yellow-400');
     }
     return $bars;
+}
+
+function getIncidentsForDay($date, $pdo) {
+    $stmt = $pdo->prepare('SELECT * FROM incidents WHERE DATE(created_at) = ?');
+    $stmt->execute([$date]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getIncidentSteps($incidentId, $pdo) {
+    $stmt = $pdo->prepare('SELECT * FROM incident_steps WHERE incident_id = ? ORDER BY created_at');
+    $stmt->execute([$incidentId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
 <!DOCTYPE html>
@@ -140,34 +132,27 @@ function getUptimeBars($serviceId, $pdo) {
                     <?php
                     $date = new DateTime();
                     for ($i = 0; $i < 90; $i++) {
-                        $dateString = $date->format('Y-m-d');
-                        $dayIncidents = getIncidentsForDay($dateString, $incidents);
-                        ?>
-                        <div class="day mt-12">
-                            <h4 class="inline-block bg-gray-100 dark:bg-gray-800 rounded-md px-2 font-medium pb-1 mb-2 text-gray-900 dark:text-gray-300">
-                                <? echo "<hr>"; ?>
-                                <?= $date->format('M d, Y') ?>
-                            </h4>
-                            <div class="incidents text-gray-700 dark:text-gray-300">
-                                <?php if (empty($dayIncidents)): ?>
-                                    <p>No incidents reported.</p>
-                                <?php else: ?>
-                                    <?php foreach ($dayIncidents as $incident): ?>
-                                        <div class="text-blue-700 dark:text-blue-400 text-xl font-semibold">
-                                            <?= htmlspecialchars($incident['title']) ?>
-                                        </div>
-                                        <p class="mt-3">
-                                            <strong class="text-gray-900 dark:text-gray-300"><?= htmlspecialchars($incident['status']) ?></strong> - <?= htmlspecialchars($incident['description']) ?>
-                                            <div class="text-gray-500"><?= date('M d, H:i T', strtotime($incident['created_at'])) ?></div>
-                                        </p>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <?php
+                        $currentDate = $date->format('Y-m-d');
+                        $incidents = getIncidentsForDay($currentDate, $pdo);
+                        echo '<div class="day mt-12">';
+                        echo '<h4 class="inline-block bg-gray-100 dark:bg-gray-800 rounded-md px-2 font-medium pb-1 mb-2 text-gray-900 dark:text-gray-300">' . $date->format('M j, Y') . '</h4>';
+                        if (empty($incidents)) {
+                            echo '<div class="incidents text-gray-500 dark:text-gray-400">No incidents reported.</div>';
+                        } else {
+                            foreach ($incidents as $incident) {
+                                echo '<div class="incidents text-gray-700 dark:text-gray-300">';
+                                echo '<div class="text-blue-700 dark:text-blue-400 text-xl font-semibold">' . htmlspecialchars($incident['title']) . '</div>';
+                                echo '<p class="mt-3"><strong class="text-gray-900 dark:text-gray-300">Created at: </strong>' . $incident['created_at'] . '</p>';
+                                echo '<p class="mt-3"><strong class="text-gray-900 dark:text-gray-300">Description: </strong>' . htmlspecialchars($incident['description']) . '</p>';
+                                $steps = getIncidentSteps($incident['id'], $pdo);
+                                foreach ($steps as $step) {
+                                    echo '<p class="mt-3"><strong class="text-gray-900 dark:text-gray-300">' . htmlspecialchars($step['step']) . '</strong> - ' . htmlspecialchars($step['description']) . '<div class="text-gray-500">' . $step['created_at'] . '</div></p>';
+                                }
+                                echo '</div>';
+                            }
+                        }
+                        echo '</div>';
                         $date->modify('-1 day');
-                        echo "<br>";
-                        echo "<hr>";
                     }
                     ?>
                 </div>
@@ -190,5 +175,3 @@ function getUptimeBars($serviceId, $pdo) {
     </div>
 </body>
 </html>
-
-
