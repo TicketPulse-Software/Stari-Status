@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
-$db = 'uptime_monitor';
-$user = 'root';
-$pass = '';
+$db = 'ticketpu_status';
+$user = 'ticketpu_status';
+$pass = 'ticketpu_status';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
