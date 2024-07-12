@@ -1,4 +1,4 @@
-/uptime-monitor
+/Stari-Status
     /admin
         index.php
         add_service.php
@@ -10,10 +10,17 @@
         delete_incident.php
         login.php
         logout.php
+        toggle_maintenance.php
     /css
         styles.css
-    /js
-        bootstrap.bundle.min.js
+    /install
+        index.php
+        step1.php
+        step2.php
+        step3.php
+        step4.php
+        step5.php
+        finish.php
     /vendor
         /boxicons
             (download from https://boxicons.com)
