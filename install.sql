@@ -8,8 +8,6 @@ CREATE TABLE users (
     role ENUM('admin', 'user') NOT NULL
 );
 
-INSERT INTO users (username, password, role) VALUES ('admin', '$2y$10$w1R9jHO5AfDZ9uix1g0hpe/5F2OT9z7s5z2cJfp/3D.kLbpiE9JuK', 'admin');
-
 CREATE TABLE services (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
